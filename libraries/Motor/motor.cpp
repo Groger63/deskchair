@@ -17,13 +17,43 @@ Motor::Motor(int _MOTOR_BACK,int _MOTOR_FORWARD, int _POTENTIOMETER, int _MARGIN
 	MARGIN_MOTOR = _MARGIN_MOTOR;
 	position = 0;
 
-  	pinMode(MOTOR_BACK, OUTPUT);     
+  pinMode(MOTOR_BACK, OUTPUT);     
  	pinMode(MOTOR_FORWARD, OUTPUT);   
+  go_stop();
 };
 
 
-
 Motor::~Motor(){};
+
+
+void Motor::go_forward()
+{
+  if(moving_status == FORWARD) return;
+  moving_status = FORWARD;
+  digitalWrite(MOTOR_FORWARD, LOW);    // Activate motor forward
+  digitalWrite(MOTOR_BACK, HIGH);    // stop motor back
+  
+};
+
+void Motor::go_backward()
+{
+  if(moving_status == BACK) return;
+
+  moving_status = BACK;
+  digitalWrite(MOTOR_FORWARD,HIGH);    // Activate motor forward
+  digitalWrite(MOTOR_BACK, LOW);    // stop motor back
+  
+};
+
+void Motor::go_stop()
+{
+  if(moving_status == STOP) return;
+
+  moving_status = STOP;
+  digitalWrite(MOTOR_FORWARD,HIGH);    // Activate motor forward
+  digitalWrite(MOTOR_BACK, HIGH);    // stop motor back
+  
+};
 
 void Motor::move_to(int new_pos)
 {
@@ -40,16 +70,13 @@ void Motor::move_to(int new_pos)
        
       }
       if(position_pot < (new_pos -MARGIN_MOTOR)){
-        digitalWrite(MOTOR_BACK, HIGH);   // Activate motor back
-        digitalWrite(MOTOR_FORWARD, LOW);    // stop motor forward
+        go_backward();
       }     
       if(position_pot > (new_pos + MARGIN_MOTOR)){
-        digitalWrite(MOTOR_FORWARD, HIGH);    // Activate motor forward
-        digitalWrite(MOTOR_BACK, LOW);    // stop motor back
+        go_forward();
       }
     }
 
-    digitalWrite(MOTOR_FORWARD, LOW);    // stop both motors once arrived
-    digitalWrite(MOTOR_BACK, LOW);    
+    go_stop();   
   
 };
