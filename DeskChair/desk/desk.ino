@@ -1,3 +1,5 @@
+#include <motor.h>
+
 
 
 
@@ -6,6 +8,8 @@
   Memorise one position
   There's 4 different motors on the chair and each one has one position
  */
+
+
 
 //-------------------Motors-------------------
 
@@ -40,6 +44,7 @@ const int BUTTON_SET = 12;     // the number of the pushbutton pin
 //-------------------Misc-------------------
 
 
+const int baudrate = 9600;
 const int MARGIN_MOTOR = 20 ;
 
 int position_pot = 0 ;
@@ -58,8 +63,25 @@ Motor motor3(MOTOR3_BACK,MOTOR3_FORWARD,POTENTIOMETER3,MARGIN_MOTOR) ;
 Motor motor4(MOTOR4_BACK,MOTOR4_FORWARD,POTENTIOMETER4,MARGIN_MOTOR) ;
 
 
-// the setup routine runs once when you press reset:
-void setup() {                
+
+//-------------------Help functions-------------------
+
+boolean is_a_number(int n)
+{
+  return n >= 48 && n <= 57;
+}
+
+int ascii2int(int n, int byte_read)
+{
+  return n*10 + (byte_read - 48);
+}
+
+
+//-------------------Setup routine-------------------
+
+void setup() {        
+
+  Serial.begin(baudrate);  
   // // initialize the digital pin as an output.
   // pinMode(MOTOR_BACK, OUTPUT);     
   // pinMode(MOTOR_FORWARD, OUTPUT);     
@@ -69,23 +91,60 @@ void setup() {
 
 }
 
-// the loop routine runs over and over again forever:
+//-------------------Loop-------------------
+
 void loop() {
   
   
-  if (digitalRead(BUTTON_MEM) == HIGH) {
-    memory_state1 = analogRead(POTENTIOMETER1) ;
-    memory_state2 = analogRead(POTENTIOMETER2) ;
-    memory_state3 = analogRead(POTENTIOMETER3) ;
-    memory_state4 = analogRead(POTENTIOMETER4) ;
-  }
-  
-  if (digitalRead(BUTTON_SET) == HIGH) {
-
-    motor1.move_to(memory_state1);
-    motor2.move_to(memory_state2);
-    motor3.move_to(memory_state3);
-    motor4.move_to(memory_state4);
-   
+  //while ( !Serial.available() );
+  while (Serial.available() > 0) {
+    int serial_read = Serial.parseInt();
+    if(serial_read==1){
+    
+   // if (digitalRead(BUTTON_MEM) == HIGH) {
+      memory_state1 = analogRead(POTENTIOMETER1) ;
+      memory_state2 = analogRead(POTENTIOMETER2) ;
+      memory_state3 = analogRead(POTENTIOMETER3) ;
+      memory_state4 = analogRead(POTENTIOMETER4) ;
+      
+      Serial.println("memory_state1");
+      Serial.println(memory_state1);
+      Serial.println("memory_state2");
+      Serial.println(memory_state2);
+      Serial.println("memory_state3");
+      Serial.println(memory_state3);
+      Serial.println("memory_state4");
+      Serial.println(memory_state4);
+      
+      delay(500);
+    }
+    else if(serial_read==2){
+    
+   // if (digitalRead(BUTTON_SET) == HIGH) {
+     
+     Serial.println("Moving to selected position : ");
+    while (Serial.available() < 1) ;
+      memory_state1 = Serial.parseInt();
+      memory_state2 = Serial.parseInt();
+      memory_state3 = Serial.parseInt();
+      memory_state4 = Serial.parseInt();
+     // motor1.move_to(memory_state1);
+     // motor2.move_to(memory_state2);
+     // motor3.move_to(memory_state3);
+     // motor4.move_to(memory_state4);
+     
+     Serial.println("Moving to selected position : ");
+     
+     Serial.println("memory_state1");
+      Serial.println(memory_state1);
+      Serial.println("memory_state2");
+      Serial.println(memory_state2);
+      Serial.println("memory_state3");
+      Serial.println(memory_state3);
+      Serial.println("memory_state4");
+      Serial.println(memory_state4);
+      
+     
+    }
   }
 }
