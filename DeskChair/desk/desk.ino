@@ -9,7 +9,8 @@
   There's 4 different motors on the chair and each one has one position
  */
 
-
+#define GET 1
+#define SET 2
 
 //-------------------Motors-------------------
 
@@ -99,13 +100,19 @@ void loop() {
   //while ( !Serial.available() );
   while (Serial.available() > 0) {
     int serial_read = Serial.parseInt();
-    if(serial_read==1){
+    if(serial_read==GET){
+      
+  digitalWrite(2, HIGH); 
     
    // if (digitalRead(BUTTON_MEM) == HIGH) {
-      memory_state1 = analogRead(POTENTIOMETER1) ;
-      memory_state2 = analogRead(POTENTIOMETER2) ;
-      memory_state3 = analogRead(POTENTIOMETER3) ;
-      memory_state4 = analogRead(POTENTIOMETER4) ;
+      //memory_state1 = analogRead(POTENTIOMETER1) ;
+      //memory_state2 = analogRead(POTENTIOMETER2) ;
+      //memory_state3 = analogRead(POTENTIOMETER3) ;
+      //memory_state4 = analogRead(POTENTIOMETER4) ;
+      memory_state1 = 1;
+      memory_state2 = 2;
+      memory_state3 = 3;
+      memory_state4 = 4;
       
       Serial.println("memory_state1");
       Serial.println(memory_state1);
@@ -115,11 +122,25 @@ void loop() {
       Serial.println(memory_state3);
       Serial.println("memory_state4");
       Serial.println(memory_state4);
-      
-      delay(500);
+        
+      delay(9500);
+       digitalWrite(2, LOW); 
     }
-    else if(serial_read==2){
+    else if(serial_read==SET){
     
+    digitalWrite(2, HIGH); 
+    
+      delay(500);
+      
+    digitalWrite(2, LOW); 
+    
+        
+      delay(500);
+      
+    digitalWrite(2, HIGH); 
+    
+      delay(500);
+    digitalWrite(2, LOW); 
    // if (digitalRead(BUTTON_SET) == HIGH) {
      
      Serial.println("Moving to selected position : ");
