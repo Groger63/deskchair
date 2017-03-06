@@ -89,6 +89,10 @@ void setup() {
   // // initialize the pushbutton pin as an input:
    pinMode(BUTTON_MEM, INPUT);
    pinMode(BUTTON_SET, INPUT);
+   
+   
+   
+   
 
 }
 
@@ -103,69 +107,51 @@ void loop() {
     if(serial_read==GET){
       
   digitalWrite(2, HIGH); 
-      delay(500);
-       digitalWrite(2, LOW); 
    // if (digitalRead(BUTTON_MEM) == HIGH) {
-      //memory_state1 = analogRead(POTENTIOMETER1) ;
-      //memory_state2 = analogRead(POTENTIOMETER2) ;
-      //memory_state3 = analogRead(POTENTIOMETER3) ;
-      //memory_state4 = analogRead(POTENTIOMETER4) ;
-      memory_state1 = 1;
-      memory_state2 = 2;
-      memory_state3 = 3;
-      memory_state4 = 4;
+      memory_state1 = analogRead(POTENTIOMETER1) ;
+      memory_state2 = analogRead(POTENTIOMETER2) ;
+      memory_state3 = analogRead(POTENTIOMETER3) ;
+      memory_state4 = analogRead(POTENTIOMETER4) ;
       
-      delay(500);
-      String str1 = String(memory_state1) + ":" ;
-      String str2 = String(memory_state2) + ":" ;
-      String str3 = String(memory_state3) + ":" ;
-      String str4 = String(memory_state4) + ":" ;
+      //delay(500);
+      //String str1 = String(memory_state1) + ":" ;
+      //String str2 = String(memory_state2) + ":" ;
+      //String str3 = String(memory_state3) + ":" ;
+      //String str4 = String(memory_state4) + "\n" ;
       
-      String str11 = str1 + str2 ;
-      String str12 = str3 + str4 ;
-      String str13 = str11 + str12 ;
-      //Serial.println("memory_state1");
-      //Serial.println(memory_state1);
-      //Serial.println("memory_state2");
-      //Serial.println(memory_state2);
-      //Serial.println("memory_state3");
-      //Serial.println(memory_state3);
-      //Serial.println("memory_state4");
-      //Serial.println(memory_state4);
+      //String str11 = str1 + str2 ;
+      //String str12 = str3 + str4 ;
+      //String str13 = str11 + str12 ;
+      Serial.println("memory_state1");
+      Serial.println(memory_state1);
+      Serial.println("memory_state2");
+      Serial.println(memory_state2);
+      Serial.println("memory_state3");
+      Serial.println(memory_state3);
+      Serial.println("memory_state4");
+      Serial.println(memory_state4);
       
-      Serial.println(str13);
+     // Serial.print(str13);
       
       //Serial.println(memory_state1 + ':' + memory_state2 + ':' + memory_state3 + ':' + memory_state4 + ':' );
         
     
     }
     else if(serial_read==SET){
-    
-    digitalWrite(2, HIGH); 
-    
-      delay(500);
-      
-    digitalWrite(2, LOW); 
-    
-        
-      delay(500);
-      
-    digitalWrite(2, HIGH); 
-    
-      delay(500);
+
     digitalWrite(2, LOW); 
    // if (digitalRead(BUTTON_SET) == HIGH) {
      
      Serial.println("Moving to selected position : ");
-    while (Serial.available() < 1) ;
-      memory_state1 = Serial.parseInt();
-      memory_state2 = Serial.parseInt();
-      memory_state3 = Serial.parseInt();
-      memory_state4 = Serial.parseInt();
-     // motor1.move_to(memory_state1);
-     // motor2.move_to(memory_state2);
-     // motor3.move_to(memory_state3);
-     // motor4.move_to(memory_state4);
+    //while (Serial.available() < 1) ;
+      //memory_state1 = Serial.parseInt();
+      //memory_state2 = Serial.parseInt();
+      //memory_state3 = Serial.parseInt();
+      //memory_state4 = Serial.parseInt();
+      motor1.move_to(memory_state1);
+      motor2.move_to(memory_state2);
+      motor3.move_to(memory_state3);
+      motor4.move_to(memory_state4);
      
      Serial.println("Moving to selected position : ");
      
