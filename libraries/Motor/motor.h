@@ -20,13 +20,14 @@ class Motor{
 		int POTENTIOMETER ; //pin assigned to potentiometer which determines the position
 		int MARGIN_MOTOR ;
                 
-        int moving_status ;
 
 		void go_forward(); //activate motors to move to the chosen position
 		void go_backward(); //activate motors to move to the chosen position
 		void go_stop(); //activate motors to move to the chosen position
 
 	public :
+	
+        int moving_status ;
 		short position ; //position of the motor. Varies from 0 to 1023
 
 		Motor(int _MOTOR_BACK,int _MOTOR_FORWARD, int _POTENTIOMETER, int _MARGIN_MOTOR);
