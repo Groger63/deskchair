@@ -22,8 +22,12 @@ Motor::Motor(int _MOTOR_BACK,int _MOTOR_FORWARD, int _POTENTIOMETER, int _MARGIN
   go_stop();
 };
 
+Motor::Motor(){};
+
+Motor::Motor(const Motor &mot){};
 
 Motor::~Motor(){};
+
 
 
 void Motor::go_forward()

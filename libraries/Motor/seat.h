@@ -12,7 +12,7 @@
 #define STOP 2 
 
 #include "Arduino.h"
-#include "Motor.h"
+#include "motor.h"
 
 class Seat{
 	private :
@@ -23,10 +23,10 @@ class Seat{
 
 	public :
 
-		Seat(Motor motor_dossier, Motor motor_assise, Motor motor_hauteur, Motor motor_avancement );
+		Seat(const Motor &assise, const Motor &avancement, const Motor &hauteur, const Motor &dossier);
 		~Seat();
 
-		void move_to(int dossier, int assise, int hauteur, int avancement); //activate motors to move to the chosen position
+		void move_to(int assise, int avancement, int hauteur, int dossier); //activate motors to move to the chosen position
 };
 
 #endif

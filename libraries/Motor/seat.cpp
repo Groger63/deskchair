@@ -9,19 +9,19 @@
 #include "Arduino.h"
 
 
-Seat::Seat(Motor _motor_dossier, Motor _motor_assise, Motor _motor_hauteur, Motor _motor_avancement )
+Seat::Seat(const Motor &assise, const Motor &avancement, const Motor &hauteur, const Motor &dossier)
 {
-	motor_dossier=_motor_dossier;
-	motor_assise = _motor_assise;
-	motor_hauteur = _motor_hauteur;
-	motor_avancement = _motor_avancement;
+	motor_dossier= dossier;
+	motor_assise = assise;
+	motor_hauteur = hauteur;
+	motor_avancement = avancement;
 };
 
 
-Motor::~Motor(){};
+Seat::~Seat(){};
 
 
-void Seat::move_to(int dossier, int assise, int hauteur, int avancement){
+void Seat::move_to(int assise, int avancement, int hauteur, int dossier){
 
 	motor_dossier.move_to(dossier);
 	motor_assise.move_to(assise);
@@ -31,4 +31,6 @@ void Seat::move_to(int dossier, int assise, int hauteur, int avancement){
 	//version simple ou les moteurs s'activent un par un
 
 
-} //activate motors to move to the chosen position
+
+
+}; //activate motors to move to the chosen position

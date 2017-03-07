@@ -31,6 +31,8 @@ class Motor{
 		short position ; //position of the motor. Varies from 0 to 1023
 
 		Motor(int _MOTOR_BACK,int _MOTOR_FORWARD, int _POTENTIOMETER, int _MARGIN_MOTOR);
+		Motor();
+		Motor(const Motor &mot);
 		~Motor();
 
 		void move_to(int new_pos); //activate motors to move to the chosen position
