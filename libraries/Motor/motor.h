@@ -21,12 +21,13 @@ class Motor{
 		int MARGIN_MOTOR ;
                 
 
-		void go_forward(); //activate motors to move to the chosen position
-		void go_backward(); //activate motors to move to the chosen position
-		void go_stop(); //activate motors to move to the chosen position
 
 	public :
 	
+		void go_forward(); //activate motors to move to the chosen position
+		void go_backward(); //activate motors to move to the chosen position
+		void go_stop(); //activate motors to move to the chosen position
+		
         int moving_status ;
 		short position ; //position of the motor. Varies from 0 to 1023
 

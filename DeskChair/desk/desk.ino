@@ -1,4 +1,4 @@
-#include <motor.h>
+#include <seat.h>
 
 
 
@@ -14,17 +14,17 @@
 
 //-------------------Motors-------------------
 
-const int MOTOR1_BACK = 2;
-const int MOTOR1_FORWARD = 3;
+const int MOTOR1_BACK = 22;
+const int MOTOR1_FORWARD = 24;
 
-const int MOTOR2_BACK = 4;
-const int MOTOR2_FORWARD = 5;
+const int MOTOR2_BACK = 26;
+const int MOTOR2_FORWARD = 28;
 
-const int MOTOR3_BACK = 6;
-const int MOTOR3_FORWARD = 7;
+const int MOTOR3_BACK = 30;
+const int MOTOR3_FORWARD = 32;
 
-const int MOTOR4_BACK = 8;
-const int MOTOR4_FORWARD = 9;
+const int MOTOR4_BACK = 34;
+const int MOTOR4_FORWARD = 36;
 
 
 //-------------------Potentiometers-------------------
@@ -38,8 +38,36 @@ const int POTENTIOMETER4 = A4;    // select the input pin for the potentiometer
 //-------------------Buttons-------------------
 
 
-const int BUTTON_MEM = 11;     // the number of the pushbutton pin
-const int BUTTON_SET = 12;     // the number of the pushbutton pin
+//const int BUTTON_MEM = 11;     // the number of the pushbutton pin
+//const int BUTTON_SET = 12;     // the number of the pushbutton pin
+
+//const int BUTTON_SELECT_MOTOR = 10;     // the number of the pushbutton pin
+//const int BUTTON_MOTOR_BACK = 11;     // the number of the pushbutton pin
+//const int BUTTON_MOTOR_FORWARD = 12;     // the number of the pushbutton pin
+
+//const int LED_MOTOR_SELECT = 13 ;
+
+
+
+const int BUTTON_DOSSIER_FORWARD = 23;     // the number of the pushbutton pin
+const int BUTTON_DOSSIER_BACK = 25;     // the number of the pushbutton pin
+
+const int BUTTON_ASSISE_FORWARD = 0;     // the number of the pushbutton pin
+const int BUTTON_ASSISE_BACK = 1;     // the number of the pushbutton pin
+
+const int BUTTON_AVANCEMENT_FORWARD = 2;     // the number of the pushbutton pin
+const int BUTTON_AVANCEMENT_BACK = 3;     // the number of the pushbutton pin
+
+const int BUTTON_HAUTEUR_FORWARD = 5;     // the number of the pushbutton pin
+const int BUTTON_HAUTEUR_BACK = 6 ;    // the number of the pushbutton pin
+//const int BUTTON_ASSISE_FORWARD = 27;     // the number of the pushbutton pin
+//const int BUTTON_ASSISE_BACK = 29;     // the number of the pushbutton pin
+
+//const int BUTTON_AVANCEMENT_FORWARD = 31;     // the number of the pushbutton pin
+//const int BUTTON_AVANCEMENT_BACK = 33;     // the number of the pushbutton pin
+
+//const int BUTTON_HAUTEUR_FORWARD = 35;     // the number of the pushbutton pin
+//const int BUTTON_HAUTEUR_BACK = 37 ;    // the number of the pushbutton pin
 
 
 //-------------------Misc-------------------
@@ -50,6 +78,8 @@ const int MARGIN_MOTOR = 20 ;
 
 int position_pot = 0 ;
 
+int motor_selected = 0 ;
+
 int memory_state1 = 512;
 int memory_state2 = 512;
 int memory_state3 = 512;
@@ -58,25 +88,15 @@ int memory_state4 = 512;
 
 //-------------------Motor units-------------------
 
-Motor motor1(MOTOR1_BACK,MOTOR1_FORWARD,POTENTIOMETER1,MARGIN_MOTOR) ;
-Motor motor2(MOTOR2_BACK,MOTOR2_FORWARD,POTENTIOMETER2,MARGIN_MOTOR) ;
-Motor motor3(MOTOR3_BACK,MOTOR3_FORWARD,POTENTIOMETER3,MARGIN_MOTOR) ;
-Motor motor4(MOTOR4_BACK,MOTOR4_FORWARD,POTENTIOMETER4,MARGIN_MOTOR) ;
+Motor assise(MOTOR1_BACK,MOTOR1_FORWARD,POTENTIOMETER1,MARGIN_MOTOR) ;
+Motor avancement(MOTOR2_BACK,MOTOR2_FORWARD,POTENTIOMETER2,MARGIN_MOTOR) ;
+Motor hauteur(MOTOR3_BACK,MOTOR3_FORWARD,POTENTIOMETER3,MARGIN_MOTOR) ;
+Motor dossier(MOTOR4_BACK,MOTOR4_FORWARD,POTENTIOMETER4,MARGIN_MOTOR) ;
 
 
+//-------------------Seat-------------------
 
-//-------------------Help functions-------------------
-
-boolean is_a_number(int n)
-{
-  return n >= 48 && n <= 57;
-}
-
-int ascii2int(int n, int byte_read)
-{
-  return n*10 + (byte_read - 48);
-}
-
+Seat seat(assise,avancement,hauteur,dossier) ;
 
 //-------------------Setup routine-------------------
 
@@ -87,9 +107,20 @@ void setup() {
   // pinMode(MOTOR_BACK, OUTPUT);     
   // pinMode(MOTOR_FORWARD, OUTPUT);     
   // // initialize the pushbutton pin as an input:
-   pinMode(BUTTON_MEM, INPUT);
-   pinMode(BUTTON_SET, INPUT);
-   
+  // pinMode(BUTTON_MEM, INPUT);
+  // pinMode(BUTTON_SET, INPUT);
+
+    pinMode(BUTTON_DOSSIER_FORWARD, INPUT);
+    pinMode(BUTTON_DOSSIER_BACK, INPUT);
+    
+    pinMode(BUTTON_ASSISE_FORWARD, INPUT);
+    pinMode(BUTTON_ASSISE_BACK, INPUT);
+    
+    pinMode(BUTTON_AVANCEMENT_FORWARD, INPUT);
+    pinMode(BUTTON_AVANCEMENT_BACK, INPUT);
+    
+    pinMode(BUTTON_HAUTEUR_FORWARD, INPUT);
+    pinMode(BUTTON_HAUTEUR_BACK, INPUT);
    
    
    
@@ -100,13 +131,87 @@ void setup() {
 
 void loop() {
   
+   
+   if (digitalRead(BUTTON_DOSSIER_FORWARD) == HIGH) {
+       
+       seat.motor_dossier.go_forward();
+     
+     
+   } 
+   else if (digitalRead(BUTTON_DOSSIER_BACK) == HIGH) {
+       
+       seat.motor_dossier.go_backward();
+     
+     
+   } 
+   
+   if (digitalRead(BUTTON_ASSISE_FORWARD) == HIGH) {
+       
+       seat.motor_assise.go_forward();
+     
+     
+   } 
+   else if (digitalRead(BUTTON_ASSISE_BACK) == HIGH) {
+       
+       seat.motor_assise.go_backward();
+          
+     
+   } 
+   if (digitalRead(BUTTON_AVANCEMENT_FORWARD) == HIGH) {
+       
+       seat.motor_avancement.go_forward();
+     
+     
+   } 
+   else if (digitalRead(BUTTON_AVANCEMENT_BACK) == HIGH) {
+       
+       seat.motor_avancement.go_backward();
+     
+     
+   }
+   
+     if (digitalRead(BUTTON_HAUTEUR_FORWARD) == HIGH) {
+       
+       seat.motor_hauteur.go_forward();
+     
+     
+   } 
+   else if (digitalRead(BUTTON_HAUTEUR_BACK) == HIGH) {
+       
+       seat.motor_hauteur.go_backward();
+       
+   }
+   
+   if(  digitalRead(BUTTON_DOSSIER_FORWARD) == LOW
+     && digitalRead(BUTTON_DOSSIER_BACK) == LOW 
+     && digitalRead(BUTTON_ASSISE_FORWARD) == LOW 
+     && digitalRead(BUTTON_ASSISE_BACK) == LOW 
+     && digitalRead(BUTTON_AVANCEMENT_FORWARD) == LOW 
+     && digitalRead(BUTTON_AVANCEMENT_BACK) == LOW 
+     && digitalRead(BUTTON_HAUTEUR_FORWARD) == LOW 
+     && digitalRead(BUTTON_HAUTEUR_BACK) == LOW )
+     {
+       seat.motor_hauteur.go_stop();
+       seat.motor_dossier.go_stop();
+       seat.motor_assise.go_stop();
+       seat.motor_avancement.go_stop();
+
+     }
+  
+  
+}
+
+
+
+
+void serialEvent() {
   
   //while ( !Serial.available() );
   while (Serial.available() > 0) {
     int serial_read = Serial.parseInt();
     if(serial_read==GET){
       
-  digitalWrite(2, HIGH); 
+    digitalWrite(2, HIGH); 
    // if (digitalRead(BUTTON_MEM) == HIGH) {
       memory_state1 = analogRead(POTENTIOMETER1) ;
       memory_state2 = analogRead(POTENTIOMETER2) ;
@@ -148,10 +253,10 @@ void loop() {
       //memory_state2 = Serial.parseInt();
       //memory_state3 = Serial.parseInt();
       //memory_state4 = Serial.parseInt();
-      motor1.move_to(memory_state1);
-      motor2.move_to(memory_state2);
-      motor3.move_to(memory_state3);
-      motor4.move_to(memory_state4);
+      //motor1.move_to(memory_state1);
+      //motor2.move_to(memory_state2);
+      //motor3.move_to(memory_state3);
+      //motor4.move_to(memory_state4);
      
      Serial.println("Moving to selected position : ");
      
@@ -167,4 +272,4 @@ void loop() {
      
     }
   }
-}
+ }

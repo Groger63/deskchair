@@ -16,13 +16,14 @@
 
 class Seat{
 	private :
+
+	public :
+
 		Motor motor_dossier;
 		Motor motor_assise;
 		Motor motor_hauteur ;
 		Motor motor_avancement ;
-
-	public :
-
+		
 		Seat(const Motor &assise, const Motor &avancement, const Motor &hauteur, const Motor &dossier);
 		~Seat();
 
