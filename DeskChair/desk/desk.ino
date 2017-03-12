@@ -14,17 +14,17 @@
 
 //-------------------Motors-------------------
 
-const int DOSSIER_BACK = 24;
-const int DOSSIER_FORWARD = 22;
+const int DOSSIER_BACK = 34;
+const int DOSSIER_FORWARD = 36;
 
-const int HAUTEUR_BACK = 28;
-const int HAUTEUR_FORWARD = 26;
+const int HAUTEUR_BACK = 32;
+const int HAUTEUR_FORWARD = 30;
 
-const int AVANCEMENT_BACK = 32;
-const int AVANCEMENT_FORWARD = 30;
+const int AVANCEMENT_BACK = 26;
+const int AVANCEMENT_FORWARD = 28;
 
-const int ASSISE_BACK = 36;
-const int ASSISE_FORWARD = 34;
+const int ASSISE_BACK = 24;//36;
+const int ASSISE_FORWARD = 22;//34;
 
 
 //-------------------Potentiometers-------------------
@@ -49,18 +49,18 @@ const int POTENTIOMETER4 = A4;    // select the input pin for the potentiometer
 
 
 
-const int BUTTON_HAUTEUR_FORWARD = 33;//23     // the number of the pushbutton pin
-const int BUTTON_HAUTEUR_BACK = 31; //25    // the number of the pushbutton pin
+const int BUTTON_HAUTEUR_FORWARD = 27;//23     // the number of the pushbutton pin
+const int BUTTON_HAUTEUR_BACK = 29; //25    // the number of the pushbutton pin
 
-const int BUTTON_ASSISE_FORWARD = 23;//31     // the number of the pushbutton pin
-const int BUTTON_ASSISE_BACK = 25;   //33  // the number of the pushbutton pin
+const int BUTTON_ASSISE_FORWARD = 35;//31     // the number of the pushbutton pin
+const int BUTTON_ASSISE_BACK = 37;   //33  // the number of the pushbutton pin
 
-const int BUTTON_DOSSIER_FORWARD = 35;     // the number of the pushbutton pin
-const int BUTTON_DOSSIER_BACK = 37;     // the number of the pushbutton pin
+const int BUTTON_DOSSIER_FORWARD = 25;     // the number of the pushbutton pin
+const int BUTTON_DOSSIER_BACK = 23;     // the number of the pushbutton pin
 
 
-const int BUTTON_AVANCEMENT_FORWARD = 27;     // the number of the pushbutton pin
-const int BUTTON_AVANCEMENT_BACK = 29 ;    // the number of the pushbutton pin
+const int BUTTON_AVANCEMENT_FORWARD = 31;     // the number of the pushbutton pin
+const int BUTTON_AVANCEMENT_BACK = 33 ;    // the number of the pushbutton pin
 
 
 //-------------------Misc-------------------
@@ -195,6 +195,14 @@ void serialEvent() {
   //while ( !Serial.available() );
   while (Serial.available() > 0) {
     int serial_read = Serial.parseInt();
+    
+    if(serial_read==42){
+      
+        seat.motor_assise.go_forward();
+       delay(3000);
+       seat.motor_assise.go_stop();
+       
+    }
     if(serial_read==GET){
       
     digitalWrite(2, HIGH); 
