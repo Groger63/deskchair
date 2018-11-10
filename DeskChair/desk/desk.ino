@@ -1,5 +1,5 @@
 #include <seat.h>
-
+#include <shiftreg.h>
 
 
 
@@ -14,17 +14,17 @@
 
 //-------------------Motors-------------------
 
-const int DOSSIER_BACK = 34;
-const int DOSSIER_FORWARD = 36;
+const int DOSSIER_BACK = 0;
+const int DOSSIER_FORWARD = 1;
 
-const int HAUTEUR_BACK = 32;
-const int HAUTEUR_FORWARD = 30;
+const int HAUTEUR_BACK = 2;
+const int HAUTEUR_FORWARD = 3;
 
-const int AVANCEMENT_BACK = 26;
-const int AVANCEMENT_FORWARD = 28;
+const int AVANCEMENT_BACK = 4;
+const int AVANCEMENT_FORWARD = 5;
 
-const int ASSISE_BACK = 24;//36;
-const int ASSISE_FORWARD = 22;//34;
+const int ASSISE_BACK = 6;//36;
+const int ASSISE_FORWARD = 7;//34;
 
 
 //-------------------Potentiometers-------------------
@@ -79,15 +79,25 @@ int memory_state3 = 512;
 int memory_state4 = 512;
 
 
+//-------------------ShiftReg-------------------
+
+#define PIN_DS 8// = 8 ;   //pin 14  75HC595    
+#define PIN_STCP 9// = 9 ;  //pin 12  75HC595
+#define PIN_SHCP 10 //= 10 ; //pin 11  75HC595
+
+
+ShiftReg *myShiftRegPtr = new ShiftReg(PIN_DS,PIN_STCP,PIN_SHCP) ;
+
+
 //-------------------Motor units-------------------
 
-Motor assise(ASSISE_BACK,ASSISE_FORWARD,POTENTIOMETER1,MARGIN_MOTOR) ;
+Motor assise(ASSISE_BACK,ASSISE_FORWARD,POTENTIOMETER1,MARGIN_MOTOR,myShiftRegPtr) ;
 
-Motor avancement(AVANCEMENT_BACK,AVANCEMENT_FORWARD,POTENTIOMETER2,MARGIN_MOTOR) ;
+Motor avancement(AVANCEMENT_BACK,AVANCEMENT_FORWARD,POTENTIOMETER2,MARGIN_MOTOR,myShiftRegPtr) ;
 
-Motor hauteur(HAUTEUR_BACK,HAUTEUR_FORWARD,POTENTIOMETER3,MARGIN_MOTOR) ;
+Motor hauteur(HAUTEUR_BACK,HAUTEUR_FORWARD,POTENTIOMETER3,MARGIN_MOTOR,myShiftRegPtr) ;
 
-Motor dossier(DOSSIER_BACK,DOSSIER_FORWARD,POTENTIOMETER4,MARGIN_MOTOR) ;
+Motor dossier(DOSSIER_BACK,DOSSIER_FORWARD,POTENTIOMETER4,MARGIN_MOTOR,myShiftRegPtr) ;
 
 
 //-------------------Seat-------------------
@@ -117,16 +127,15 @@ void setup() {
     
     pinMode(BUTTON_HAUTEUR_FORWARD, INPUT);
     pinMode(BUTTON_HAUTEUR_BACK, INPUT);
-   
-   
-   
+
+
 
 }
 
 //-------------------Loop-------------------
 
 void loop() {
-  
+  /*
    
    if (digitalRead(BUTTON_DOSSIER_FORWARD) == HIGH) {
        
@@ -181,9 +190,7 @@ void loop() {
        seat.motor_hauteur.go_backward();
        
    }else seat.motor_hauteur.go_stop();
-   
-   
-  
+*/
   
 }
 
@@ -192,78 +199,23 @@ void loop() {
 
 void serialEvent() {
   
-  //while ( !Serial.available() );
   while (Serial.available() > 0) {
-    int serial_read = Serial.parseInt();
-    
-    if(serial_read==42){
-      
-        seat.motor_assise.go_forward();
-       delay(3000);
-       seat.motor_assise.go_stop();
-       
-    }
-    if(serial_read==GET){
-      
-    digitalWrite(2, HIGH); 
-   // if (digitalRead(BUTTON_MEM) == HIGH) {
-      memory_state1 = analogRead(POTENTIOMETER1) ;
-      memory_state2 = analogRead(POTENTIOMETER2) ;
-      memory_state3 = analogRead(POTENTIOMETER3) ;
-      memory_state4 = analogRead(POTENTIOMETER4) ;
-      
-      //delay(500);
-      //String str1 = String(memory_state1) + ":" ;
-      //String str2 = String(memory_state2) + ":" ;
-      //String str3 = String(memory_state3) + ":" ;
-      //String str4 = String(memory_state4) + "\n" ;
-      
-      //String str11 = str1 + str2 ;
-      //String str12 = str3 + str4 ;
-      //String str13 = str11 + str12 ;
-      Serial.println("memory_state1");
-      Serial.println(memory_state1);
-      Serial.println("memory_state2");
-      Serial.println(memory_state2);
-      Serial.println("memory_state3");
-      Serial.println(memory_state3);
-      Serial.println("memory_state4");
-      Serial.println(memory_state4);
-      
-     // Serial.print(str13);
-      
-      //Serial.println(memory_state1 + ':' + memory_state2 + ':' + memory_state3 + ':' + memory_state4 + ':' );
-        
-    
-    }
-    else if(serial_read==SET){
 
-    digitalWrite(2, LOW); 
-   // if (digitalRead(BUTTON_SET) == HIGH) {
-     
-     Serial.println("Moving to selected position : ");
-    //while (Serial.available() < 1) ;
-      //memory_state1 = Serial.parseInt();
-      //memory_state2 = Serial.parseInt();
-      //memory_state3 = Serial.parseInt();
-      //memory_state4 = Serial.parseInt();
-      //motor1.move_to(memory_state1);
-      //motor2.move_to(memory_state2);
-      //motor3.move_to(memory_state3);
-      //motor4.move_to(memory_state4);
-     
-     Serial.println("Moving to selected position : ");
-     
-     Serial.println("memory_state1");
-      Serial.println(memory_state1);
-      Serial.println("memory_state2");
-      Serial.println(memory_state2);
-      Serial.println("memory_state3");
-      Serial.println(memory_state3);
-      Serial.println("memory_state4");
-      Serial.println(memory_state4);
-      
-     
-    }
+    String test = Serial.readString();
+
+    Serial.println(test);
+
+    
+    /*
+     * JSON here
+     * 
+     * 
+     * 
+     */
+
+
+
+    
+
   }
  }

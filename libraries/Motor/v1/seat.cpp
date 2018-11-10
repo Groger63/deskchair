@@ -21,12 +21,16 @@ Seat::Seat(const Motor &assise, const Motor &avancement, const Motor &hauteur, c
 Seat::~Seat(){};
 
 
-void Seat::move_to(int assise, int avancement, int hauteur, int dossier)
-{
-	while(
-		motor_dossier.select_direction(dossier) || 
-		motor_avancement.select_direction(avancement) || 
-		motor_hauteur.select_direction(hauteur) || 
-		motor_assise.select_direction(assise)
-		);
+void Seat::move_to(int assise, int avancement, int hauteur, int dossier){
+
+	motor_dossier.move_to(dossier);
+	motor_assise.move_to(assise);
+	motor_hauteur.move_to(hauteur);
+	motor_avancement.move_to(avancement);
+
+	//version simple ou les moteurs s'activent un par un
+
+
+
+
 }; //activate motors to move to the chosen position

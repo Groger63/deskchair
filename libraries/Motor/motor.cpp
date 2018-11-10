@@ -9,7 +9,7 @@
 #include "Arduino.h"
 
 
-Motor::Motor(int _MOTOR_BACK,int _MOTOR_FORWARD, int _POTENTIOMETER, int _MARGIN_MOTOR)
+Motor::Motor(int _MOTOR_BACK,int _MOTOR_FORWARD, int _POTENTIOMETER, int _MARGIN_MOTOR, ShiftReg *SR): myShiftReg(SR)
 {
 	POTENTIOMETER=_POTENTIOMETER;
 	MOTOR_BACK = _MOTOR_BACK;
@@ -17,8 +17,7 @@ Motor::Motor(int _MOTOR_BACK,int _MOTOR_FORWARD, int _POTENTIOMETER, int _MARGIN
 	MARGIN_MOTOR = _MARGIN_MOTOR;
 	position = 0;
 
-  pinMode(MOTOR_BACK, OUTPUT);     
- 	pinMode(MOTOR_FORWARD, OUTPUT);   
+
   go_stop();
 };
 
@@ -28,36 +27,60 @@ Motor::Motor(const Motor &mot){};
 
 Motor::~Motor(){};
 
-
-
-void Motor::go_forward()
+int Motor::get_position()
 {
-  if(moving_status == FORWARD) return;
+  return analogRead(POTENTIOMETER);
+};//basically just returns the value of the pot
+
+
+int Motor::go_forward()
+{
+  if(moving_status == FORWARD) return FORWARD;
   moving_status = FORWARD;
-  digitalWrite(MOTOR_FORWARD, LOW);    // Activate motor forward
-  digitalWrite(MOTOR_BACK, HIGH);    // stop motor back
-  
+
+  myShiftReg->setRegisterPin(MOTOR_FORWARD, LOW);    // Activate motor forward
+  myShiftReg->setRegisterPin(MOTOR_BACK, HIGH);    // stop motor back
+
+  myShiftReg->writeRegisters() ;
+
+  return FORWARD ;
 };
 
-void Motor::go_backward()
+int Motor::go_backward()
 {
-  if(moving_status == BACK) return;
+  if(moving_status == BACK) return BACK;
 
   moving_status = BACK;
-  digitalWrite(MOTOR_FORWARD,HIGH);    // Activate motor forward
-  digitalWrite(MOTOR_BACK, LOW);    // stop motor back
+  myShiftReg->setRegisterPin(MOTOR_FORWARD,HIGH);    // Activate motor forward
+  myShiftReg->setRegisterPin(MOTOR_BACK, LOW);    // stop motor back
   
+  myShiftReg->writeRegisters() ;
+
+  return BACK ;
 };
 
-void Motor::go_stop()
+int Motor::go_stop()
 {
-  if(moving_status == STOP) return;
+  if(moving_status == STOP) return STOP;
 
   moving_status = STOP;
-  digitalWrite(MOTOR_FORWARD,HIGH);    // Activate motor forward
-  digitalWrite(MOTOR_BACK, HIGH);    // stop motor back
+  myShiftReg->setRegisterPin(MOTOR_FORWARD,HIGH);    // Activate motor forward
+  myShiftReg->setRegisterPin(MOTOR_BACK, HIGH);    // stop motor back
   
+  myShiftReg->writeRegisters() ;
+
+  return STOP ;
 };
+
+int Motor::select_direction(int position)
+{
+  return is_arrived(position) ? go_stop() : ((get_position() < position) ? go_backward() : go_forward() );
+}
+
+bool Motor::is_arrived(int position)
+{
+  return ( get_position() < position + MARGIN_MOTOR && get_position() >position - MARGIN_MOTOR ) ;
+}
 
 void Motor::move_to(int new_pos)
 {
