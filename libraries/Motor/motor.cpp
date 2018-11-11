@@ -74,12 +74,19 @@ int Motor::go_stop()
 
 int Motor::select_direction(int position)
 {
+/*  if (is_arrived(position))
+    return go_stop() ;
+  else if ((get_position() < position) )
+  {
+    return go_backward() ;
+  }
+  return go_forward() ;*/
   return is_arrived(position) ? go_stop() : ((get_position() < position) ? go_backward() : go_forward() );
 }
 
 bool Motor::is_arrived(int position)
 {
-  return ( get_position() < position + MARGIN_MOTOR && get_position() >position - MARGIN_MOTOR ) ;
+  return ( get_position() < position + MARGIN_MOTOR && get_position() > position - MARGIN_MOTOR ) ;
 }
 
 void Motor::move_to(int new_pos)
@@ -106,4 +113,4 @@ void Motor::move_to(int new_pos)
 
     go_stop();   
   
-};
+}; // old, can be removed

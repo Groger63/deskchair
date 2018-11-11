@@ -7,9 +7,9 @@
 #ifndef Seat_h
 #define Seat_h
 
-#define BACK 0
+#define BACK 2
 #define FORWARD 1
-#define STOP 2 
+#define STOP 0 
 
 #include "Arduino.h"
 #include "motor.h"
@@ -18,6 +18,10 @@ class Seat{
 	private :
 		// ShiftReg myShiftReg ;
 	public :
+
+		bool aborts; 
+		bool moving ;
+
 		Motor motor_dossier;
 		Motor motor_assise;
 		Motor motor_hauteur ;
@@ -26,7 +30,8 @@ class Seat{
 		Seat(const Motor &assise, const Motor &avancement, const Motor &hauteur, const Motor &dossier);
 		~Seat();
 
-		void move_to(int assise, int avancement, int hauteur, int dossier); //activate motors to move to the chosen position
+//		void move_to(int assise, int avancement, int hauteur, int dossier); //activate motors to move to the chosen position
+		bool move_to(int assise, int avancement, int hauteur, int dossier); //activate motors to move to the chosen position
 };
 
 #endif

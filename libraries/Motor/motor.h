@@ -7,9 +7,9 @@
 #ifndef Motor_h
 #define Motor_h
 
-#define BACK 0
+#define BACK 2
 #define FORWARD 1
-#define STOP 2 
+#define STOP 0 
 
 #include "Arduino.h"
 #include <shiftreg.h>

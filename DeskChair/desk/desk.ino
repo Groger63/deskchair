@@ -1,6 +1,6 @@
+#include <ArduinoJson.h>
 #include <seat.h>
 #include <shiftreg.h>
-
 
 
 /*
@@ -9,75 +9,73 @@
   There's 4 different motors on the chair and each one has one position
  */
 
-#define GET 1
-#define SET 2
+#define ASSISE 0
+#define AVANCEMENT 1
+#define HAUTEUR 2
+#define DOSSIER 3
 
 //-------------------Motors-------------------
 
-const int DOSSIER_BACK = 0;
-const int DOSSIER_FORWARD = 1;
+// Pins plugged to the shift reg
+#define DOSSIER_BACK 0
+#define DOSSIER_FORWARD 1
 
-const int HAUTEUR_BACK = 2;
-const int HAUTEUR_FORWARD = 3;
+#define HAUTEUR_BACK 2
+#define HAUTEUR_FORWARD 3
 
-const int AVANCEMENT_BACK = 4;
-const int AVANCEMENT_FORWARD = 5;
+#define AVANCEMENT_BACK 4
+#define AVANCEMENT_FORWARD 5
 
-const int ASSISE_BACK = 6;//36;
-const int ASSISE_FORWARD = 7;//34;
+#define ASSISE_BACK 6//36;
+#define ASSISE_FORWARD 7//34;
 
 
 //-------------------Potentiometers-------------------
 
-const int POTENTIOMETER1 = A1;    // select the input pin for the potentiometer
-const int POTENTIOMETER2 = A2;    // select the input pin for the potentiometer
-const int POTENTIOMETER3 = A3;    // select the input pin for the potentiometer
-const int POTENTIOMETER4 = A4;    // select the input pin for the potentiometer
+#define POT_ASSISE A1   // select the input pin for the potentiometer
+#define POT_AVANCEMENT A2    // select the input pin for the potentiometer
+#define POT_HAUTEUR A3    // select the input pin for the potentiometer
+#define POT_DOSSIER A4    // select the input pin for the potentiometer
 
 
 //-------------------Buttons-------------------
 
 
-//const int BUTTON_MEM = 11;     // the number of the pushbutton pin
-//const int BUTTON_SET = 12;     // the number of the pushbutton pin
+//#define BUTTON_MEM = 11;     // the number of the pushbutton pin
+//#define BUTTON_SET = 12;     // the number of the pushbutton pin
 
-//const int BUTTON_SELECT_MOTOR = 10;     // the number of the pushbutton pin
-//const int BUTTON_MOTOR_BACK = 11;     // the number of the pushbutton pin
-//const int BUTTON_MOTOR_FORWARD = 12;     // the number of the pushbutton pin
+//#define BUTTON_SELECT_MOTOR = 10;     // the number of the pushbutton pin
+//#define BUTTON_MOTOR_BACK = 11;     // the number of the pushbutton pin
+//#define BUTTON_MOTOR_FORWARD = 12;     // the number of the pushbutton pin
 
-//const int LED_MOTOR_SELECT = 13 ;
-
-
-
-const int BUTTON_HAUTEUR_FORWARD = 27;//23     // the number of the pushbutton pin
-const int BUTTON_HAUTEUR_BACK = 29; //25    // the number of the pushbutton pin
-
-const int BUTTON_ASSISE_FORWARD = 35;//31     // the number of the pushbutton pin
-const int BUTTON_ASSISE_BACK = 37;   //33  // the number of the pushbutton pin
-
-const int BUTTON_DOSSIER_FORWARD = 25;     // the number of the pushbutton pin
-const int BUTTON_DOSSIER_BACK = 23;     // the number of the pushbutton pin
+//#define LED_MOTOR_SELECT = 13 ;
 
 
-const int BUTTON_AVANCEMENT_FORWARD = 31;     // the number of the pushbutton pin
-const int BUTTON_AVANCEMENT_BACK = 33 ;    // the number of the pushbutton pin
+
+// Rotary Encoder
+
+#define ROTARY_SW 2
+#define ROTARY_DT 3
+#define ROTARY_CLK 4
+
+#define BUTTON_HAUTEUR_FORWARD  27  //23     // the number of the pushbutton pin
+#define BUTTON_HAUTEUR_BACK  29      //25    // the number of the pushbutton pin
+
+#define BUTTON_ASSISE_FORWARD 35//31     // the number of the pushbutton pin
+#define BUTTON_ASSISE_BACK 37   //33  // the number of the pushbutton pin
+
+#define BUTTON_DOSSIER_FORWARD 23    // the number of the pushbutton pin
+#define BUTTON_DOSSIER_BACK 25    // the number of the pushbutton pin
+
+
+#define BUTTON_AVANCEMENT_FORWARD 33    // the number of the pushbutton pin
+#define BUTTON_AVANCEMENT_BACK 31     // the number of the pushbutton pin
 
 
 //-------------------Misc-------------------
 
-
-const int baudrate = 9600;
-const int MARGIN_MOTOR = 20 ;
-
-int position_pot = 0 ;
-
-int motor_selected = 0 ;
-
-int memory_state1 = 512;
-int memory_state2 = 512;
-int memory_state3 = 512;
-int memory_state4 = 512;
-
+#define baudrate 9600
+#define MARGIN_MOTOR 70 
 
 //-------------------ShiftReg-------------------
 
@@ -85,36 +83,27 @@ int memory_state4 = 512;
 #define PIN_STCP 9// = 9 ;  //pin 12  75HC595
 #define PIN_SHCP 10 //= 10 ; //pin 11  75HC595
 
-
 ShiftReg *myShiftRegPtr = new ShiftReg(PIN_DS,PIN_STCP,PIN_SHCP) ;
-
 
 //-------------------Motor units-------------------
 
-Motor assise(ASSISE_BACK,ASSISE_FORWARD,POTENTIOMETER1,MARGIN_MOTOR,myShiftRegPtr) ;
-
-Motor avancement(AVANCEMENT_BACK,AVANCEMENT_FORWARD,POTENTIOMETER2,MARGIN_MOTOR,myShiftRegPtr) ;
-
-Motor hauteur(HAUTEUR_BACK,HAUTEUR_FORWARD,POTENTIOMETER3,MARGIN_MOTOR,myShiftRegPtr) ;
-
-Motor dossier(DOSSIER_BACK,DOSSIER_FORWARD,POTENTIOMETER4,MARGIN_MOTOR,myShiftRegPtr) ;
-
+Motor assise(ASSISE_BACK,ASSISE_FORWARD,POT_ASSISE,MARGIN_MOTOR,myShiftRegPtr) ;
+Motor avancement(AVANCEMENT_BACK,AVANCEMENT_FORWARD,POT_AVANCEMENTETER2,MARGIN_MOTOR,myShiftRegPtr) ;
+Motor hauteur(HAUTEUR_BACK,HAUTEUR_FORWARD,POT_HAUTEUR,MARGIN_MOTOR,myShiftRegPtr) ;
+Motor dossier(DOSSIER_BACK,DOSSIER_FORWARD,POT_DOSSIER,MARGIN_MOTOR,myShiftRegPtr) ;
 
 //-------------------Seat-------------------
 
-Seat seat(assise,avancement,hauteur,dossier) ;
+int position_asked[4] ={ 512, 512 , 512, 512 } ;
+bool move_asked = false ;
+bool aborting = false ;
+Seat * seat ;
 
 //-------------------Setup routine-------------------
 
 void setup() {        
 
   Serial.begin(baudrate);  
-  // // initialize the digital pin as an output.
-  // pinMode(MOTOR_BACK, OUTPUT);     
-  // pinMode(MOTOR_FORWARD, OUTPUT);     
-  // // initialize the pushbutton pin as an input:
-  // pinMode(BUTTON_MEM, INPUT);
-  // pinMode(BUTTON_SET, INPUT);
 
     pinMode(BUTTON_DOSSIER_FORWARD, INPUT);
     pinMode(BUTTON_DOSSIER_BACK, INPUT);
@@ -128,94 +117,178 @@ void setup() {
     pinMode(BUTTON_HAUTEUR_FORWARD, INPUT);
     pinMode(BUTTON_HAUTEUR_BACK, INPUT);
 
+    delay(1000);
 
+    seat = new Seat(assise,avancement,hauteur,dossier);
+    
+    pinMode (ROTARY_DT,INPUT);
+    pinMode (ROTARY_CLK,INPUT);
+    pinMode (ROTARY_SW,INPUT);
+    digitalWrite(ROTARY_SW, HIGH);
+
+    attachInterrupt(digitalPinToInterrupt(ROTARY_SW), abort_move, HIGH);
 
 }
 
 //-------------------Loop-------------------
 
-void loop() {
-  /*
-   
-   if (digitalRead(BUTTON_DOSSIER_FORWARD) == HIGH) {
-       
-       seat.motor_dossier.go_forward();
-     
-     
-   } 
-   else if (digitalRead(BUTTON_DOSSIER_BACK) == HIGH) {
-       
-       seat.motor_dossier.go_backward();
-     
-     
-   }
-  else seat.motor_dossier.go_stop();
-   
-   if (digitalRead(BUTTON_ASSISE_FORWARD) == HIGH) {
-       
-       seat.motor_assise.go_forward();
-     
-     
-   } 
-   else if (digitalRead(BUTTON_ASSISE_BACK) == HIGH) {
-       
-       seat.motor_assise.go_backward();
-          
-     
-   }else  seat.motor_assise.go_stop();
-   
-   
-   if (digitalRead(BUTTON_AVANCEMENT_FORWARD) == HIGH) {
-       
-       seat.motor_avancement.go_forward();
-     
-     
-   } 
-   else if (digitalRead(BUTTON_AVANCEMENT_BACK) == HIGH) {
-       
-       seat.motor_avancement.go_backward();
-     
-     
-   }else seat.motor_avancement.go_stop();
-   
-   
-     if (digitalRead(BUTTON_HAUTEUR_FORWARD) == HIGH) {
-       
-       seat.motor_hauteur.go_forward();
-     
-     
-   } 
-   else if (digitalRead(BUTTON_HAUTEUR_BACK) == HIGH) {
-       
-       seat.motor_hauteur.go_backward();
-       
-   }else seat.motor_hauteur.go_stop();
-*/
+void loop() 
+{
+  if(move_asked)
+  {
+    move_asked = seat->move_to(
+                    position_asked[ASSISE], 
+                    position_asked[AVANCEMENT],
+                    position_asked[HAUTEUR],
+                    position_asked[DOSSIER]
+                  );
+    if(!move_asked)
+    {
+      // Send more like a Json msg
+      Serial.println("stopped");
+    }
+  }
+  if(!seat->moving)
+  {
+    read_position_buttons() ;
+  }
   
 }
 
+static void abort_move()
+{
+    seat->aborts = true ;
+    Serial.println("Aborting...");
+}
 
+void read_position_buttons()
+{
+   if (digitalRead(BUTTON_DOSSIER_FORWARD) == HIGH) 
+   {
+       seat->motor_dossier.go_forward();
+   } 
+   else if (digitalRead(BUTTON_DOSSIER_BACK) == HIGH) 
+   {
+       seat->motor_dossier.go_backward();
+   }
+   else seat->motor_dossier.go_stop();
+   
+   if (digitalRead(BUTTON_ASSISE_FORWARD) == HIGH) 
+   {
+       seat->motor_assise.go_forward();
+   } 
+   else if (digitalRead(BUTTON_ASSISE_BACK) == HIGH) 
+   {
+       seat->motor_assise.go_backward();
+   }
+   else  seat->motor_assise.go_stop();
+   
+   
+   if (digitalRead(BUTTON_AVANCEMENT_FORWARD) == HIGH) 
+   {
+       seat->motor_avancement.go_forward(); 
+   } 
+   else if (digitalRead(BUTTON_AVANCEMENT_BACK) == HIGH) 
+   {
+       seat->motor_avancement.go_backward();
+   }
+   else seat->motor_avancement.go_stop();
+   
+   if (digitalRead(BUTTON_HAUTEUR_FORWARD) == HIGH) 
+   { 
+       seat->motor_hauteur.go_forward();
+   } 
+   else if (digitalRead(BUTTON_HAUTEUR_BACK) == HIGH) 
+   { 
+       seat->motor_hauteur.go_backward();
+   }
+   else seat->motor_hauteur.go_stop();
+}
 
 
 void serialEvent() {
   
   while (Serial.available() > 0) {
 
-    String test = Serial.readString();
 
-    Serial.println(test);
+    StaticJsonBuffer<512> jsonBuffer ;
+    JsonObject& command = jsonBuffer.parseObject(Serial);
+    String cmd = command["cmd"];
 
-    
-    /*
-     * JSON here
-     * 
-     * 
-     * 
-     */
-
-
-
-    
-
+    if( cmd == "abort" )
+    {
+      seat->aborts = true ;
+      const int capacity = JSON_OBJECT_SIZE(2);
+      StaticJsonBuffer<capacity> jb;
+      JsonObject& obj = jb.createObject();
+      obj["cmd"] = "abort";
+      obj["answer"] = "ok";
+      obj.printTo(Serial);
+    }
+    else if( cmd == "get" )
+    {
+      //create Json object with each seat position
+      const int capacity = JSON_OBJECT_SIZE(6);
+      StaticJsonBuffer<capacity> jb;
+      JsonObject& obj = jb.createObject();
+      obj["cmd"] = "get";
+      obj["answer"] = "ok";
+      obj["dossier"] = seat->motor_dossier.get_position() ;
+      obj["assise"] = seat->motor_assise.get_position();
+      obj["avancement"] = seat->motor_avancement.get_position()  ;
+      obj["hauteur"] = seat->motor_hauteur.get_position() ;
+      
+      obj.printTo(Serial);
+    }
+    else if(cmd == "set" )
+    {
+      int dossier = command["dossier"] ;
+      int avancement = command["avancement"] ;
+      int assise = command["assise"] ;
+      int hauteur = command["assise"] ;
+      
+      position_asked[DOSSIER] = dossier ;
+      position_asked[ASSISE] = assise ;
+      position_asked[AVANCEMENT] = avancement ;
+      position_asked[HAUTEUR] = hauteur ;
+      move_asked = true ;
+      
+      const int capacity = JSON_OBJECT_SIZE(2);
+      StaticJsonBuffer<capacity> jb;
+      JsonObject& obj = jb.createObject();
+      obj["cmd"] = "set";
+      obj["answer"] = "ok";
+      obj.printTo(Serial);
+    }
+    else if( cmd == "move" )
+    {
+      int dossier = command["dossier"] ;
+      int avancement = command["avancement"] ;
+      int assise = command["assise"] ;
+      int hauteur = command["assise"] ;
+            
+      position_asked[DOSSIER] = seat->motor_dossier.get_position() + dossier ;
+      position_asked[ASSISE] = seat->motor_assise.get_position() + assise ;
+      position_asked[AVANCEMENT] = seat->motor_avancement.get_position() + avancement ;
+      position_asked[HAUTEUR] = seat->motor_hauteur.get_position() + hauteur ;
+      
+      move_asked = true ;
+      
+      const int capacity = JSON_OBJECT_SIZE(2);
+      StaticJsonBuffer<capacity> jb;
+      JsonObject& obj = jb.createObject();
+      obj["cmd"] = "move";
+      obj["answer"] = "ok";
+      obj.printTo(Serial);
+    }
+    else 
+    {
+      const int capacity = JSON_OBJECT_SIZE(2);
+      StaticJsonBuffer<capacity> jb;
+      JsonObject& obj = jb.createObject();
+      obj["cmd"] = cmd ;
+      obj["answer"] = "unknown";
+      obj.printTo(Serial);
+    }
   }
  }
