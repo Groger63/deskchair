@@ -52,6 +52,7 @@ void ShiftReg::writeRegisters()
  // boucle pour affecter chaque pin des 74hc595
  // loop for aplly all value for each pin 74hc595
   for(int i = 7; i >=  0; i--){
+
  
     //doit etre a l'etat bas pour changer de colonne plus tard
     //need to be low for change column soon

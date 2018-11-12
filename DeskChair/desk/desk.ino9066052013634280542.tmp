@@ -58,11 +58,6 @@
 #define ROTARY_DT 3
 #define ROTARY_CLK 4
 
-boolean aLastState;  
-int counter = 0; 
-boolean aState;
-boolean sw_clicked ;
-
 #define BUTTON_HAUTEUR_FORWARD  27  //23     // the number of the pushbutton pin
 #define BUTTON_HAUTEUR_BACK  29      //25    // the number of the pushbutton pin
 
@@ -90,50 +85,12 @@ boolean sw_clicked ;
 
 ShiftReg *myShiftRegPtr = new ShiftReg(PIN_DS,PIN_STCP,PIN_SHCP) ;
 
-
 //-------------------Motor units-------------------
 
-
-Motor assise(
-  ASSISE_BACK,
-  ASSISE_FORWARD,
-  BUTTON_ASSISE_BACK,
-  BUTTON_ASSISE_FORWARD,
-  POT_ASSISE,
-  MARGIN_MOTOR,
-  myShiftRegPtr
-  ) ;
-  
-Motor avancement(
-  AVANCEMENT_BACK,
-  AVANCEMENT_FORWARD,
-  BUTTON_AVANCEMENT_BACK,
-  BUTTON_ASSISE_FORWARD,
-  POT_AVANCEMENT,
-  MARGIN_MOTOR,
-  myShiftRegPtr
-  ) ;
-  
-Motor hauteur(
-  HAUTEUR_BACK,
-  HAUTEUR_FORWARD,
-  BUTTON_HAUTEUR_BACK,
-  BUTTON_HAUTEUR_FORWARD,
-  POT_HAUTEUR,
-  MARGIN_MOTOR,
-  myShiftRegPtr
-  ) ;
-  
-Motor dossier(
-  DOSSIER_BACK,
-  DOSSIER_FORWARD,
-  BUTTON_DOSSIER_BACK,
-  BUTTON_DOSSIER_FORWARD,
-  POT_DOSSIER,
-  MARGIN_MOTOR,
-  myShiftRegPtr
-  ) ;
-
+Motor assise(ASSISE_BACK,ASSISE_FORWARD,POT_ASSISE,MARGIN_MOTOR,myShiftRegPtr) ;
+Motor avancement(AVANCEMENT_BACK,AVANCEMENT_FORWARD,POT_AVANCEMENT,MARGIN_MOTOR,myShiftRegPtr) ;
+Motor hauteur(HAUTEUR_BACK,HAUTEUR_FORWARD,POT_HAUTEUR,MARGIN_MOTOR,myShiftRegPtr) ;
+Motor dossier(DOSSIER_BACK,DOSSIER_FORWARD,POT_DOSSIER,MARGIN_MOTOR,myShiftRegPtr) ;
 
 //-------------------Seat-------------------
 
@@ -166,10 +123,8 @@ void setup() {
     pinMode (ROTARY_SW,INPUT);
     digitalWrite(ROTARY_SW, HIGH);
 
-    
-    
-    aLastState = digitalRead(ROTARY_DT);   
-    sw_clicked = false ;
+    attachInterrupt(digitalPinToInterrupt(ROTARY_SW), abort_move, HIGH);
+
 }
 
 //-------------------Loop-------------------
@@ -192,43 +147,61 @@ void loop()
   }
   if(!seat->moving)
   {
-    seat->read_buttons();
+    read_position_buttons() ;
   }
   
-  check_rotary();
 }
 
-void check_rotary()
+static void abort_move()
 {
-   // Reads the initial state of the outputA
-
-    aState = digitalRead(ROTARY_DT); // Reads the "current" state of the outputA
-    // If the previous and the current state of the outputA are different, that means a Pulse has occured
-
-    
-    if(digitalRead(ROTARY_SW) == LOW && !sw_clicked)
-    {
-      
-      Serial.println("Button clicked");
-      sw_clicked = true ;
-      
-    }else if(digitalRead(ROTARY_SW) == HIGH && sw_clicked) sw_clicked = false ;
-    if (aState != aLastState)
-    {     
-      // If the outputB state is different to the outputA state, that means the encoder is rotating clockwise
-      if (digitalRead(ROTARY_CLK) != aState) 
-      { 
-         counter ++;
-      } 
-      else 
-      {
-         counter --;
-      }
-      Serial.print("Position: ");
-      Serial.println(counter);
-    }
-    aLastState = aState; // Updates the previous state of the outputA with the current state
+    seat->aborts = true ;
+    Serial.println("Aborting...");
 }
+
+void read_position_buttons()
+{
+   if (digitalRead(BUTTON_DOSSIER_FORWARD) == HIGH) 
+   {
+       seat->motor_dossier.go_forward();
+   } 
+   else if (digitalRead(BUTTON_DOSSIER_BACK) == HIGH) 
+   {
+       seat->motor_dossier.go_backward();
+   }
+   else seat->motor_dossier.go_stop();
+   
+   if (digitalRead(BUTTON_ASSISE_FORWARD) == HIGH) 
+   {
+       seat->motor_assise.go_forward();
+   } 
+   else if (digitalRead(BUTTON_ASSISE_BACK) == HIGH) 
+   {
+       seat->motor_assise.go_backward();
+   }
+   else  seat->motor_assise.go_stop();
+   
+   
+   if (digitalRead(BUTTON_AVANCEMENT_FORWARD) == HIGH) 
+   {
+       seat->motor_avancement.go_forward(); 
+   } 
+   else if (digitalRead(BUTTON_AVANCEMENT_BACK) == HIGH) 
+   {
+       seat->motor_avancement.go_backward();
+   }
+   else seat->motor_avancement.go_stop();
+   
+   if (digitalRead(BUTTON_HAUTEUR_FORWARD) == HIGH) 
+   { 
+       seat->motor_hauteur.go_forward();
+   } 
+   else if (digitalRead(BUTTON_HAUTEUR_BACK) == HIGH) 
+   { 
+       seat->motor_hauteur.go_backward();
+   }
+   else seat->motor_hauteur.go_stop();
+}
+
 
 void serialEvent() {
   

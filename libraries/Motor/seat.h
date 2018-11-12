@@ -30,6 +30,7 @@ class Seat{
 		Seat(const Motor &assise, const Motor &avancement, const Motor &hauteur, const Motor &dossier);
 		~Seat();
 
+		void read_buttons() ;
 //		void move_to(int assise, int avancement, int hauteur, int dossier); //activate motors to move to the chosen position
 		bool move_to(int assise, int avancement, int hauteur, int dossier); //activate motors to move to the chosen position
 };

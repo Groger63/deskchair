@@ -16,15 +16,17 @@
 
 class Motor{
 	private :
+	public :
+        ShiftReg *myShiftReg ; 
 		int MOTOR_BACK; //pin assigned to motor back
 		int MOTOR_FORWARD; //pin assigned to motor forward
 		int POTENTIOMETER ; //pin assigned to potentiometer which determines the position
 		int MARGIN_MOTOR ;
+		int BUTTON_BACK ;
+		int BUTTON_FORWARD ;
 
-        ShiftReg *myShiftReg ; 
 
-
-	public :
+	//public :
 	
 		int go_forward(); //activate motors to move to the chosen position
 		int go_backward(); //activate motors to move to the chosen position
@@ -36,12 +38,14 @@ class Motor{
 		
         byte moving_status ;
 		short position ; //position of the motor. Varies from 0 to 1023
-
+		Motor(int _MOTOR_BACK,int _MOTOR_FORWARD, int _BUTTON_BACK, int _BUTTON_FORWARD, int _POTENTIOMETER, int _MARGIN_MOTOR, ShiftReg *SR);
 		Motor(int _MOTOR_BACK,int _MOTOR_FORWARD, int _POTENTIOMETER, int _MARGIN_MOTOR, ShiftReg *SR);
+
 		Motor();
 		Motor(const Motor &mot);
 		~Motor();
 
+		void read_buttons() ;
 		void move_to(int new_pos); //activate motors to move to the chosen position
 };
 

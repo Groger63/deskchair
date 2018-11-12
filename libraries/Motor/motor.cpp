@@ -15,11 +15,31 @@ Motor::Motor(int _MOTOR_BACK,int _MOTOR_FORWARD, int _POTENTIOMETER, int _MARGIN
 	MOTOR_BACK = _MOTOR_BACK;
 	MOTOR_FORWARD = _MOTOR_FORWARD;
 	MARGIN_MOTOR = _MARGIN_MOTOR;
+
 	position = 0;
+
+  go_stop();
+};
+
+Motor::Motor(int _MOTOR_BACK,int _MOTOR_FORWARD, int _BUTTON_BACK, int _BUTTON_FORWARD, int _POTENTIOMETER, int _MARGIN_MOTOR, ShiftReg *SR)
+{
+  POTENTIOMETER=_POTENTIOMETER;
+
+  MOTOR_BACK = _MOTOR_BACK;
+  MOTOR_FORWARD = _MOTOR_FORWARD;
+
+  MARGIN_MOTOR = _MARGIN_MOTOR;
+
+  BUTTON_FORWARD = _BUTTON_FORWARD;
+  BUTTON_BACK = _BUTTON_BACK;
+
+  myShiftReg = SR ;
+  position = 0;
 
 
   go_stop();
 };
+
 
 Motor::Motor(){};
 
@@ -113,4 +133,18 @@ void Motor::move_to(int new_pos)
 
     go_stop();   
   
-}; // old, can be removed
+} // old, can be removed
+
+
+void Motor::read_buttons()
+{
+  if (digitalRead(BUTTON_FORWARD) == HIGH) 
+  {
+    go_forward();
+  } 
+  else if (digitalRead(BUTTON_BACK) == HIGH) 
+  {
+    go_backward();
+  }
+  else go_stop();
+} 

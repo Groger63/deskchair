@@ -23,6 +23,14 @@ Seat::Seat(const Motor &assise, const Motor &avancement, const Motor &hauteur, c
 Seat::~Seat(){};
 
 
+void Seat::read_buttons() 
+{
+	motor_dossier.read_buttons();
+	motor_assise.read_buttons();
+	motor_hauteur.read_buttons() ;
+	motor_avancement.read_buttons() ;
+}
+
 /*void Seat::move_to(int assise, int avancement, int hauteur, int dossier)
 {
 	//bool abort = false ;
