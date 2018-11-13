@@ -22,12 +22,12 @@ class Seat{
 		bool aborts; 
 		bool moving ;
 
-		Motor motor_dossier;
-		Motor motor_assise;
-		Motor motor_hauteur ;
-		Motor motor_avancement ;
+		Motor * motor_dossier;
+		Motor *motor_assise;
+		Motor *motor_hauteur ;
+		Motor *motor_avancement ;
 
-		Seat(const Motor &assise, const Motor &avancement, const Motor &hauteur, const Motor &dossier);
+		Seat( Motor *assise,  Motor *avancement,  Motor *hauteur,  Motor *dossier);
 		~Seat();
 
 		void read_buttons() ;

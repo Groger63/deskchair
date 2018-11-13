@@ -9,7 +9,7 @@
 #include "Arduino.h"
 #include <ArduinoJson.h>
 
-Seat::Seat(const Motor &assise, const Motor &avancement, const Motor &hauteur, const Motor &dossier)
+Seat::Seat( Motor *assise,  Motor *avancement,  Motor *hauteur,  Motor *dossier)
 {
 	motor_dossier= dossier;
 	motor_assise = assise;
@@ -25,10 +25,10 @@ Seat::~Seat(){};
 
 void Seat::read_buttons() 
 {
-	motor_dossier.read_buttons();
-	motor_assise.read_buttons();
-	motor_hauteur.read_buttons() ;
-	motor_avancement.read_buttons() ;
+	motor_dossier->read_buttons();
+	motor_assise->read_buttons();
+	motor_hauteur->read_buttons() ;
+	motor_avancement->read_buttons() ;
 }
 
 /*void Seat::move_to(int assise, int avancement, int hauteur, int dossier)
@@ -64,18 +64,18 @@ bool Seat::move_to(int assise, int avancement, int hauteur, int dossier)
 {
 	if(aborts)
 	{
-		motor_dossier.go_stop();
-		motor_avancement.go_stop();
-		motor_hauteur.go_stop();
-		motor_assise.go_stop();
+		motor_dossier->go_stop();
+		motor_avancement->go_stop();
+		motor_hauteur->go_stop();
+		motor_assise->go_stop();
 		moving = false ;
 		aborts = false ;
 	}
 	else {
-		int doss = motor_dossier.select_direction(dossier) ;
-		int av = motor_avancement.select_direction(avancement) ;
-		int haut = motor_hauteur.select_direction(hauteur) ;
-		int ass = motor_assise.select_direction(assise) ;
+		int doss = motor_dossier->select_direction(dossier) ;
+		int av = motor_avancement->select_direction(avancement) ;
+		int haut = motor_hauteur->select_direction(hauteur) ;
+		int ass = motor_assise->select_direction(assise) ;
 		moving =  ( doss || av || haut || ass ) ; // has to do this otherwise the functions above are not executed
 	}
 	return moving ;
