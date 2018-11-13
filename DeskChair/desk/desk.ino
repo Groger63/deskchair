@@ -1,3 +1,10 @@
+
+#include <Wire.h> // Include Wire.h to control I2C
+#include <LiquidCrystal_I2C.h> //Download & include the code library can be downloaded below
+#include "Timer.h"
+ 
+ 
+
 #include <ArduinoJson.h>
 #include <seat.h>
 #include <shiftreg.h>
@@ -76,11 +83,17 @@ boolean sw_clicked ;
 #define BUTTON_AVANCEMENT_FORWARD 33    // the number of the pushbutton pin
 #define BUTTON_AVANCEMENT_BACK 31     // the number of the pushbutton pin
 
+//-------------------Screen-------------------
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+bool light_lcd = true ;
+int lcd_event ;
 
 //-------------------Misc-------------------
 
 #define baudrate 9600
 #define MARGIN_MOTOR 70 
+Timer timer1 ;
 
 //-------------------ShiftReg-------------------
 
@@ -166,6 +179,12 @@ void setup() {
     pinMode (ROTARY_SW,INPUT);
     digitalWrite(ROTARY_SW, HIGH);
 
+    // initialize the LCD
+    lcd.begin();
+    lcd.clear();
+    // Turn on the blacklight and print a message.
+    lcd.print("Hello, world!");
+    start_backlight();
     
     
     aLastState = digitalRead(ROTARY_DT);   
@@ -192,10 +211,33 @@ void loop()
   }
   if(!seat->moving)
   {
-    seat->read_buttons();
+    // En attendant que je règle les faux contacts sur les boutons...
+    
+    //seat->read_buttons();
   }
   
   check_rotary();
+  timer1.update();
+}
+
+static void start_backlight()
+{
+  if(light_lcd)
+  {
+    timer1.stop(lcd_event);
+  }
+  else
+  {
+    light_lcd = true ;
+    lcd.setBacklight(light_lcd); //Set Back light turn On
+  }
+  lcd_event = timer1.after(5000, stop_backlight) ;
+}
+
+static void stop_backlight()
+{
+  light_lcd = false ;
+  lcd.setBacklight(light_lcd); //Set Back light turn On
 }
 
 void check_rotary()
@@ -208,13 +250,16 @@ void check_rotary()
     
     if(digitalRead(ROTARY_SW) == LOW && !sw_clicked)
     {
-      
-      Serial.println("Button clicked");
+      start_backlight() ;
+      lcd.clear();
+      lcd.print("Button clicked");
       sw_clicked = true ;
       
     }else if(digitalRead(ROTARY_SW) == HIGH && sw_clicked) sw_clicked = false ;
     if (aState != aLastState)
     {     
+      
+      start_backlight() ;
       // If the outputB state is different to the outputA state, that means the encoder is rotating clockwise
       if (digitalRead(ROTARY_CLK) != aState) 
       { 
@@ -224,8 +269,9 @@ void check_rotary()
       {
          counter --;
       }
-      Serial.print("Position: ");
-      Serial.println(counter);
+      lcd.clear();
+      lcd.print("Position: ");
+      lcd.print(counter);
     }
     aLastState = aState; // Updates the previous state of the outputA with the current state
 }
